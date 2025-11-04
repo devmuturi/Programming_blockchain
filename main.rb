@@ -1,2 +1,2 @@
 # Main file
-require_relative "lib"
+require_relative "lib/crypto_hashes"
