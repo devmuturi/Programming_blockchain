@@ -3,19 +3,25 @@ require "digest"
 require "pp"
 
 class Block
-  attr_reader :data, :hash, :nonce, :prev
+  attr_reader :data, :hash, :nonce, :prev, :difficulty, :time
 
-  def initialize(data, prev)
-    @data = data
-    @prev = prev
-    @nonce, @hash = compute_hash_with_proof_of_work
+  def hash
+    Digest::SHA256.hexdigest("#{nonce}#{time}#{difficulty}#{prev}#{data}")
   end
 
-  def compute_hash_with_proof_of_work(difficulty = "0000")
+  def initialize(data, prev, difficulty: "0000")
+    @data = data
+    @prev = prev
+    @difficulty = difficulty
+    @nonce, @time = compute_hash_with_proof_of_work(difficulty)
+  end
+
+  def compute_hash_with_proof_of_work(difficulty = "00")
     nonce = 0
+    time = Time.now.to_i
     loop do
-      hash = Digest::SHA256.hexdigest("#{nonce}#{prev}#{data}")
-      return [nonce, hash] if hash.start_with?(difficulty)
+      hash = Digest::SHA256.hexdigest("#{nonce}#{time}#{prev}#{data}")
+      return [nonce, time] if hash.start_with?(difficulty)
 
       nonce += 1
     end
