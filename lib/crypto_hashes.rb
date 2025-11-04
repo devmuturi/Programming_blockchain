@@ -1,4 +1,14 @@
 # crypto hashes
 require "digest"
+require "pp"
 
-p Digest::SHA256.hexdigest("Hello, Cryptos!")
+class Block
+  attr_reader :data, :hash
+
+  def initialize(data)
+    @data = data
+    @hash = Digest::SHA256.hexdigest(data)
+  end
+end
+
+pp Block.new("Hello, Cryptos!")
